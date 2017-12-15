@@ -60,7 +60,7 @@
 	   parent=issue.getParentObject()
 	   Collection versions=parent.getFixVersions()
 	   
-	   if (versions==null) {
+	   if (!(versions)) {
 		   log.info("Parent(${parent}) has no FixedVersions set")
 	   }
 	   else {
