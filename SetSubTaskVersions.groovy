@@ -59,16 +59,24 @@
 	   log.debug("This is subtask event")
 	   parent=issue.getParentObject()
 	   Collection versions=parent.getFixVersions()
+	   Collection subtask_versions=issue.getFixVersions()
 	   
-	   if (!(versions)) {
-		   log.info("Parent(${parent}) has no FixedVersions set")
+	   if (!(subtask_versions)){
+		   log.info("Subtask(${issue}) has no FixedVersions set by user, going to inherit from the parent ${parent}")
+		   
+		   if (!(versions)) {
+		   		log.info("Parent(${parent}) has no FixedVersions set")
+	   		}
+	   		else {
+				   log.info("Parent(${parent}) FixedVersions:${versions} setting for subtask:${issue}")
+		   
+				   MutableIssue mutableIssue = issueManager.getIssueObject(event.issue.id)
+				   mutableIssue.setFixVersions(versions)
+				   issueManager.updateIssue(event.getUser(),mutableIssue, EventDispatchOption.ISSUE_UPDATED, false)   
+			   }
 	   }
 	   else {
-		   log.info("Parent(${parent}) FixedVersions:${versions} setting for subtask:${issue}")
-		   
-		   MutableIssue mutableIssue = issueManager.getIssueObject(event.issue.id)
-		   mutableIssue.setFixVersions(versions)
-		   issueManager.updateIssue(event.getUser(),mutableIssue, EventDispatchOption.ISSUE_UPDATED, false)   
+		   log.info("Subtask($issue] has fixed versions set. NOT going to overwrite")
 	   }
 	   
  }
